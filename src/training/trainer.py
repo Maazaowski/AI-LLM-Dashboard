@@ -67,21 +67,31 @@ class ModelTrainer:
                         self.loss_history.append(logs['loss'])
                         if 'eval_accuracy' in logs:
                             self.accuracy_history.append(logs['eval_accuracy'])
+
+                        # Add learning rate tracking
+                        if 'learning_rate' in logs:
+                            learning_rate = logs['learning_rate']
+
+                        # Update the loss plot
+                        self.trainer.window.update_loss_plot(self.loss_history)
             
                         # Calculate running averages
                         recent_losses = self.loss_history[-self.window_size:]
                         avg_loss = sum(recent_losses) / len(recent_losses)
+                        total_epochs = args.num_train_epochs
             
                         avg_accuracy = None
                         if self.accuracy_history:
                             recent_accuracy = self.accuracy_history[-self.window_size:]
                             avg_accuracy = sum(recent_accuracy) / len(recent_accuracy)
             
-                        self.trainer.logger.log("TRAINING", f"Average Loss: {avg_loss:.4f}")
+                        self.trainer.logger.log("TRAINING", f"Loss: {logs['loss']:.4f}")
                         self.trainer.window.update_training_metrics(
                             epoch=state.epoch,
                             loss=avg_loss,
-                            accuracy=avg_accuracy
+                            accuracy=avg_accuracy,
+                            learning_rate=learning_rate,
+                            total_epochs=total_epochs
                         )
 
                 def on_train_begin(self, args, state, control, **kwargs):
@@ -89,6 +99,7 @@ class ModelTrainer:
 
                 def on_train_end(self, args, state, control, **kwargs):
                     self.trainer.logger.log("TRAINING", "Training completed")
+
             trainer = Trainer(
                 model=self.model,
                 args=training_args,
@@ -102,4 +113,5 @@ class ModelTrainer:
             self.update_progress(100)  # Ensure we reach 100%
             
         except Exception as e:
-            self.logger.log("ERROR", f"Training failed: {str(e)}")
+            import traceback
+            self.logger.log("ERROR", f"Training failed: {str(e)}\n{traceback.format_exc()}")
