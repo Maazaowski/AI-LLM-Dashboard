@@ -3,11 +3,9 @@ from ttkbootstrap.constants import *
 from tkinter import scrolledtext
 from datetime import datetime
 import psutil
-import threading
 import time
 from threading import Thread
 from src.ui.styles import UI_STYLES
-from src.config.training_config import get_training_args
 
 class TrainingProgressWindow:
     def __init__(self, title="LLM Training Dashboard"):
@@ -315,36 +313,46 @@ class TrainingProgressWindow:
         graphs_frame = ttk.LabelFrame(parent, text="Training Progress", bootstyle="info", padding=10)
         graphs_frame.pack(fill=X, pady=10)
 
-        # Create figure with dark theme styling
-        self.fig = Figure(figsize=(8, 4), facecolor=UI_STYLES['colors']['card_bg'])
-        self.ax = self.fig.add_subplot(111)
-        self.ax.set_facecolor(UI_STYLES['colors']['card_bg'])
-    
-        # Style the plot
-        self.ax.tick_params(colors='white')
-        self.ax.spines['bottom'].set_color('white')
-        self.ax.spines['top'].set_color('white')
-        self.ax.spines['left'].set_color('white')
-        self.ax.spines['right'].set_color('white')
-        self.ax.xaxis.label.set_color('white')
-        self.ax.yaxis.label.set_color('white')
-        self.ax.title.set_color('white')
+        # Create figure with two subplots side by side
+        self.fig = Figure(figsize=(12, 4), facecolor=UI_STYLES['colors']['card_bg'])
+        
+        # Loss plot
+        self.loss_ax = self.fig.add_subplot(121)
+        self._style_subplot(self.loss_ax)
+        self.loss_line, = self.loss_ax.plot([], [], 'c-', label='Training Loss', linewidth=2)
+        self.avg_loss_line, = self.loss_ax.plot([], [], 'r--', label='Moving Average', linewidth=2)
+        self.loss_ax.set_xlabel('Steps')
+        self.loss_ax.set_ylabel('Loss')
+        self.loss_ax.set_title('Training Loss Over Time')
+        self.loss_ax.legend(facecolor=UI_STYLES['colors']['card_bg'], labelcolor='white')
 
-        # Initialize empty plots with initial range 0-100
-        self.current_step = 0
-        self.ax.set_xlim(0, 100)
-        self.loss_line, = self.ax.plot([], [], 'c-', label='Training Loss', linewidth=2)
-        self.avg_loss_line, = self.ax.plot([], [], 'r--', label='Moving Average', linewidth=2)
-    
-        self.ax.set_xlabel('Steps')
-        self.ax.set_ylabel('Loss')
-        self.ax.set_title('Training Loss Over Time')
-        self.ax.grid(True, color='gray', alpha=0.2)
-        self.ax.legend(facecolor=UI_STYLES['colors']['card_bg'], labelcolor='white')
+        # Learning rate plot
+        self.lr_ax = self.fig.add_subplot(122)
+        self._style_subplot(self.lr_ax)
+        self.lr_line, = self.lr_ax.plot([], [], 'y-', label='Learning Rate', linewidth=2)
+        self.lr_ax.set_xlabel('Steps')
+        self.lr_ax.set_ylabel('Learning Rate')
+        self.lr_ax.set_title('Learning Rate Schedule')
+        self.lr_ax.legend(facecolor=UI_STYLES['colors']['card_bg'], labelcolor='white')
 
         self.canvas = FigureCanvasTkAgg(self.fig, master=graphs_frame)
         self.canvas.draw()
         self.canvas.get_tk_widget().pack(fill=BOTH, expand=True)
+
+        # Initialize tracking variables
+        self.current_step = 0
+        self.loss_ax.set_xlim(0, 100)
+        self.lr_ax.set_xlim(0, 100)
+
+    def _style_subplot(self, ax):
+        ax.set_facecolor(UI_STYLES['colors']['card_bg'])
+        ax.tick_params(colors='white')
+        for spine in ax.spines.values():
+            spine.set_color('white')
+        ax.xaxis.label.set_color('white')
+        ax.yaxis.label.set_color('white')
+        ax.title.set_color('white')
+        ax.grid(True, color='gray', alpha=0.2)
 
     def update_loss_plot(self, losses, window_size=50):
         if losses:
@@ -362,16 +370,37 @@ class TrainingProgressWindow:
             self.avg_loss_line.set_data(steps, moving_avg)
         
             # Update x-axis range if current_step exceeds current limit
-            x_min, x_max = self.ax.get_xlim()
+            x_min, x_max = self.loss_ax.get_xlim()
             if self.current_step >= x_max:
-                self.ax.set_xlim(0, x_max + 100)
+                self.loss_ax.set_xlim(0, x_max + 100)
         
             # Update y-axis limits
-            self.ax.relim()
-            self.ax.autoscale_view(scalex=False)  # Only autoscale y-axis
+            self.loss_ax.relim()
+            self.loss_ax.autoscale_view(scalex=False)  # Only autoscale y-axis
         
             # Refresh canvas
+            self.canvas.draw()    
+            
+    def update_lr_plot(self, learning_rates):
+        if learning_rates:
+            # Create matching steps array
+            steps = list(range(len(learning_rates)))
+            
+            # Now both arrays will have the same length
+            self.lr_line.set_data(steps, learning_rates)
+            
+            # Update x-axis range if needed
+            x_min, x_max = self.lr_ax.get_xlim()
+            if len(steps) >= x_max:
+                self.lr_ax.set_xlim(0, x_max + 100)
+            
+            # Update y-axis limits
+            self.lr_ax.relim()
+            self.lr_ax.autoscale_view(scalex=False)
+            
+            # Refresh canvas
             self.canvas.draw()
+            
     def _create_log_console(self, parent):
         # Create log console frame
         log_frame = ttk.LabelFrame(parent, text="Training Logs", bootstyle="info", padding=10)
@@ -420,5 +449,7 @@ class TrainingProgressWindow:
                 text=value,
                 font=UI_STYLES['fonts']['content']
             ).pack(side=LEFT, padx=10)
+
+
 
 

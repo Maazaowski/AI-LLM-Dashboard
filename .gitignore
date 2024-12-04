@@ -1,0 +1,7 @@
+# Results directory
+results/
+
+# Python cache files
+*.pyc
+*.py[cod]
+*$py.class

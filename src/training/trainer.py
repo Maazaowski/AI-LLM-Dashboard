@@ -54,6 +54,7 @@ class ModelTrainer:
                     self.current_epoch = 0
                     self.progress_per_epoch = progress_per_epoch
                     self.loss_history = []
+                    self.lr_history = []
                     self.accuracy_history = []
                     self.window_size = 10  # Number of recent values to average
         
@@ -71,6 +72,8 @@ class ModelTrainer:
                         # Add learning rate tracking
                         if 'learning_rate' in logs:
                             learning_rate = logs['learning_rate']
+                            self.lr_history.append(logs['learning_rate'])
+                            self.trainer.window.update_lr_plot(self.lr_history)
 
                         # Update the loss plot
                         self.trainer.window.update_loss_plot(self.loss_history)
