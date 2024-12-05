@@ -1,4 +1,5 @@
-transformers
+transformers[torch]
+accelerate>=0.26.0
 datasets
 ttkbootstrap
 psutil
