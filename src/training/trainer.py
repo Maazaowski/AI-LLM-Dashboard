@@ -14,13 +14,18 @@ class ModelTrainer:
         self.current_progress = 0
 
     def update_progress(self, increment: float):
-        self.current_progress += increment
-        self.logger.update_progress(min(self.current_progress, 100))
+        self.current_progress = min(self.current_progress + increment, 100)
+        self.logger.update_progress(self.current_progress)
 
     def load_dataset(self):
-        self.logger.log("INFO", "Loading and preprocessing dataset...")
-        self.dataset = load_dataset('wikitext', 'wikitext-103-raw-v1')
-        self.logger.log("INFO", f"Dataset loaded. {len(self.dataset['train'])} training examples.")
+        try:
+            self.logger.log("INFO", "Loading and preprocessing dataset...")
+            self.dataset = load_dataset('wikitext', 'wikitext-103-raw-v1')
+            self.logger.log("INFO", f"Dataset loaded. {len(self.dataset['train'])} training examples.")
+
+        except Exception as e:
+            self.logger.log("ERROR", "Error loading dataset.")
+            raise
 
     def initialize_model(self):
         self.logger.log("INFO", "Initializing model...")
