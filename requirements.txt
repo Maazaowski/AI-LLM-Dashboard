@@ -1,0 +1,8 @@
+transformers
+datasets
+ttkbootstrap
+psutil
+torch
+pytest
+pytest-cov
+pytest-mock
