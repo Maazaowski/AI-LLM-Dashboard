@@ -2,7 +2,7 @@
 
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/Maazaowski/AI-LLM-Dashboard)
 [![Build](https://img.shields.io/badge/build-001-green.svg)](https://github.com/Maazaowski/AI-LLM-Dashboard)
-[![Last Updated](https://img.shields.io/badge/last--updated-2024.12.10-lightgrey.svg)](https://github.com/Maazaowski/AI-LLM-Dashboard)
+[![Last Updated](https://img.shields.io/badge/last--updated-2024.12.10-lightgrey?style=flat-square)](https://github.com/Maazaowski/AI-LLM-Dashboard)
 [![Python](https://img.shields.io/badge/python-3.8-blue.svg)](https://github.com/Maazaowski/AI-LLM-Dashboard)
 
 A sophisticated dashboard for monitoring and controlling Large Language Model (LLM) training processes with real-time metrics visualization and system monitoring.
