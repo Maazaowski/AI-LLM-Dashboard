@@ -1,9 +1,9 @@
 # AI-LLM-Dashboard
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/yourusername/AI-LLM-Dashboard)
-[![Build](https://img.shields.io/badge/build-001-green.svg)](https://github.com/yourusername/AI-LLM-Dashboard)
-[![Last Updated](https://img.shields.io/badge/last%20updated-2024-12-10-lightgrey.svg)](https://github.com/yourusername/AI-LLM-Dashboard)
-[![Python](https://img.shields.io/badge/python-3.8-blue.svg)](https://github.com/yourusername/AI-LLM-Dashboard)
+[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/Maazaowski/AI-LLM-Dashboard)
+[![Build](https://img.shields.io/badge/build-001-green.svg)](https://github.com/Maazaowski/AI-LLM-Dashboard)
+[![Last Updated](https://img.shields.io/badge/last%20updated-2024-12-10-lightgrey.svg)](https://github.com/Maazaowski/AI-LLM-Dashboard)
+[![Python](https://img.shields.io/badge/python-3.8-blue.svg)](https://github.com/Maazaowski/AI-LLM-Dashboard)
 
 A sophisticated dashboard for monitoring and controlling Large Language Model (LLM) training processes with real-time metrics visualization and system monitoring.
 
@@ -11,7 +11,7 @@ A sophisticated dashboard for monitoring and controlling Large Language Model (L
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/AI-LLM-Dashboard
+git clone https://github.com/Maazaowski/AI-LLM-Dashboard
 
 # Install dependencies
 pip install -r requirements.txt
