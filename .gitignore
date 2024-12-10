@@ -5,3 +5,7 @@ results/
 *.pyc
 *.py[cod]
 *$py.class
+
+#readme generator
+readmeGenerator.js
+scripts/
